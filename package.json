@@ -8,10 +8,11 @@
     "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.9.5",
+    "jest": "^25.3.0",
     "rimraf": "^3.0.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest ./src",
     "precompile": "npm run build:clean",
     "compile": "npm run compile:js",
     "build": "npm run compile",
