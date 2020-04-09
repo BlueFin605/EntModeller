@@ -1,6 +1,6 @@
 {
-  "name": "@bluefin605/EntModeller",
-  "version": "1.0.1",
+  "name": "@bluefin605/entmodeller",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "devDependencies": {
