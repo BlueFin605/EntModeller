@@ -35,7 +35,8 @@ const EntModeller = (function () {
 
           let ss = {
             service: wsd.Shapes.ellipse,
-            queue: wsd.Shapes.rectangle
+            queue: wsd.Shapes.rectangle,
+            database: wsd.Shapes.cylinder
           }
 
           internal(this).serviceShapes = ss;
