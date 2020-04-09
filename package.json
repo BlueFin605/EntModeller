@@ -1,0 +1,23 @@
+{
+  "name": "log-trace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.9.5",
+    "rimraf": "^3.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "precompile": "npm run build:clean",
+    "compile": "npm run compile:js",
+    "build": "npm run compile",
+    "build:clean": "rimraf build/*",
+    "compile:js": "babel src -d build"
+  },
+  "author": "",
+  "license": "ISC"
+}
