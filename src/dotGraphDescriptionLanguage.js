@@ -14,9 +14,9 @@ module.exports.GenerateDOT = function (data, serviceShapes) {
 
     let output = 'digraph services {\r\n';
     output += '{\r\n';
-    unique.forEach(e => output += `${e.name} [shape=${serviceShapes[e.type]}]\r\n`)
+    unique.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}]\r\n`)
     output += '}\r\n';
-    data.forEach(relationship => output += `${relationship.from.name} -> ${relationship.to.name}\r\n`)
+    data.forEach(relationship => output += `${transformName(relationship.from.name)} -> ${transformName(relationship.to.name)}\r\n`)
     output += '}\r\n';
     return output;
 }
@@ -82,3 +82,8 @@ module.exports.Shapes = class Shapes {
     static larrow = 'larrow';
     static lpromoter = 'lpromoter';
 };
+
+function transformName(name)
+{
+    return name.replace("-","_");
+}
