@@ -13,8 +13,9 @@ const EntModeller = (function () {
   }
 
   class EntModeller {
-    constructor(sources, formatter, serviceShapes) {
+    constructor(sources, data, formatter, serviceShapes) {
       internal(this).sources = sources
+      internal(this).data = data
       internal(this).formatter = formatter
       internal(this).serviceShapes = serviceShapes
     }
@@ -23,10 +24,16 @@ const EntModeller = (function () {
       class Builder {
         constructor() {
           internal(this).sources = new Map()
+          internal(this).data = new Map()
         }
 
         addSource(name, source, comparer) {
           internal(this).sources.set(name, { name: name, source: source, comparer: comparer })
+          return this
+        }
+
+        addData(name, data, comparer) {
+          internal(this).data.set(name, { name: name, data: data, comparer: comparer })
           return this
         }
 
@@ -52,7 +59,7 @@ const EntModeller = (function () {
 
         build() {
           let ss = internal(this).serviceShapes;
-          var tracer = new EntModeller(internal(this).sources, internal(this).formatter, internal(this).serviceShapes);
+          var tracer = new EntModeller(internal(this).sources, internal(this).data, internal(this).formatter, internal(this).serviceShapes);
           return tracer;
         }
       }
@@ -64,10 +71,14 @@ const EntModeller = (function () {
       return new Promise((resolve, reject) => {
         let requests = [];
         let formatter = internal(this).formatter;
-        let djm = internal(this).sources;
         internal(this).sources.forEach(source => {
           console.log(`source:${source.name}`)
           requests.push(source.source.generateSourceConnections())
+        });
+
+        internal(this).data.forEach(data => {
+          console.log(`data:${data.name}`)
+          requests.push(data.data)
         });
 
         Promise.all(requests).then(allResults => {
