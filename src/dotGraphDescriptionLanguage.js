@@ -85,5 +85,10 @@ module.exports.Shapes = class Shapes {
 
 function transformName(name)
 {
-    return name.replace("-","_");
+    return name.replaceAll("-","_");
 }
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};

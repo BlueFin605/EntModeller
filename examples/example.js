@@ -1,7 +1,7 @@
 var lt = require('../src/index.js')
 
-var results = [{ from: { name: 'service-A', type: 'service' }, to: { name: 'serviceB', type: 'service' } },
-{ from: { name: 'serviceE', type: 'service' }, to: { name: 'service-A', type: 'service' } },
+var results = [{ from: { name: 'service-type-A', type: 'service' }, to: { name: 'serviceB', type: 'service' } },
+{ from: { name: 'serviceE', type: 'service' }, to: { name: 'service-type-A', type: 'service' } },
 { from: { name: 'serviceB', type: 'service' }, to: { name: 'queueA', type: 'queue' } },
 { from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceC', type: 'service' } },
 { from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceD', type: 'service' } },
