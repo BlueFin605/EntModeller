@@ -1,6 +1,6 @@
 {
   "name": "@bluefin605/entmodeller",
-  "version": "1.0.9",
+  "version": "1.0.12",
   "license": "ISC",
   "description": "",
   "main": "./build/index.js",
