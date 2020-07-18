@@ -1,11 +1,12 @@
 var lt = require('../src/index.js')
 
-var results = [{ from: { name: 'service-type-A', type: 'service' }, to: { name: 'serviceB', type: 'service', style: 'styleA'} },
+var results = [{ from: { name: 'service-type-A', type: 'service' }, to: { name: 'serviceB', type: 'service', style: 'styleA' } },
 { from: { name: 'serviceE', type: 'service' }, to: { name: 'service-type-A', type: 'service' } },
 { from: { name: 'serviceB', type: 'service', style: 'styleA' }, to: { name: 'queueA', type: 'queue' } },
 { from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceC', type: 'service' } },
 { from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceD', type: 'service' } },
-{ from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceE', type: 'service' } }];
+{ from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceE', type: 'service' } },
+{ node: { name: 'queueJ', type: 'queue' } }];
 
 var styles = {
   styleA: {

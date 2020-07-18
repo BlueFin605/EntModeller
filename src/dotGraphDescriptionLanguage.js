@@ -1,14 +1,25 @@
 module.exports.GenerateDOT = function (data, serviceShapes, styles) {
     let unique = [];
     data.forEach(r => {
-        let json = JSON.stringify(r.from)
-        if (unique.some(s => JSON.stringify(s) === json) === false) {
-            unique.push(r.from);
+        if (r.from !== undefined) {
+            let json = JSON.stringify(r.from)
+            if (unique.some(s => JSON.stringify(s) === json) === false) {
+                unique.push(r.from);
+            }
         }
 
-        json = JSON.stringify(r.to)
-        if (unique.some(s => JSON.stringify(s) === json) === false) {
-            unique.push(r.to);
+        if (r.to !== undefined) {
+            json = JSON.stringify(r.to)
+            if (unique.some(s => JSON.stringify(s) === json) === false) {
+                unique.push(r.to);
+            }
+        }
+
+        if (r.node !== undefined) {
+            json = JSON.stringify(r.node)
+            if (unique.some(s => JSON.stringify(s) === json) === false) {
+                unique.push(r.node);
+            }
         }
     });
 
@@ -16,7 +27,7 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles) {
     output += '{\r\n';
     unique.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles)}]\r\n`)
     output += '}\r\n';
-    data.forEach(relationship => output += `${transformName(relationship.from.name)} -> ${transformName(relationship.to.name)}\r\n`)
+    data.filter(f => f.node === undefined).forEach(relationship => output += `${transformName(relationship.from.name)} -> ${transformName(relationship.to.name)}\r\n`)
     output += '}\r\n';
     return output;
 }
@@ -94,8 +105,7 @@ function buildStyles(service, styles) {
     if (styles === undefined)
         return '';
 
-    if (service.style in styles)
-    {
+    if (service.style in styles) {
         let nodeStyles = styles[service.style];
         let styleCsv = '';
         Object.entries(nodeStyles).forEach(([fkey, fval]) => styleCsv += `, ${fkey}=${fval}`);
@@ -105,7 +115,7 @@ function buildStyles(service, styles) {
     return '';
 };
 
-function onlyUnique(value, index, self) { 
+function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
