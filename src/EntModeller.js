@@ -13,11 +13,12 @@ const EntModeller = (function () {
   }
 
   class EntModeller {
-    constructor(sources, data, formatter, serviceShapes) {
+    constructor(sources, data, formatter, serviceShapes, styles) {
       internal(this).sources = sources
       internal(this).data = data
       internal(this).formatter = formatter
       internal(this).serviceShapes = serviceShapes
+      internal(this).styles = styles;
     }
 
     static get Builder() {
@@ -37,7 +38,7 @@ const EntModeller = (function () {
           return this
         }
 
-        outputAsDOTDefaultServices() {
+        outputAsDOTDefaultServices(styles) {
           internal(this).formatter = wsd.GenerateDOT
 
           let ss = {
@@ -47,19 +48,23 @@ const EntModeller = (function () {
           }
 
           internal(this).serviceShapes = ss;
+          if (styles === undefined)
+            styles = {};
+
+          internal(this).styles = styles;   //no styles, so just the default
 
           return this;
         }
 
-        outputAsDOT(serviceShapes) {
+        outputAsDOT(serviceShapes, styles) {
           internal(this).formatter = wsd.GenerateDOT
           internal(this).serviceShapes = serviceShapes
+          internal(this).styles = styles;
           return this;
         }
 
         build() {
-          let ss = internal(this).serviceShapes;
-          var tracer = new EntModeller(internal(this).sources, internal(this).data, internal(this).formatter, internal(this).serviceShapes);
+          var tracer = new EntModeller(internal(this).sources, internal(this).data, internal(this).formatter, internal(this).serviceShapes, internal(this).styles);
           return tracer;
         }
       }
@@ -89,7 +94,7 @@ const EntModeller = (function () {
             })
           });
           let results = Array.from(merged.values());
-          let formatted = formatter(results, internal(this).serviceShapes);
+          let formatted = formatter(results, internal(this).serviceShapes, internal(this).styles);
           resolve(formatted);
         });
       });
