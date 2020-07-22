@@ -13,12 +13,15 @@ const EntModeller = (function () {
   }
 
   class EntModeller {
-    constructor(sources, data, formatter, serviceShapes, styles) {
+    constructor(sources, data, formatter, serviceShapes, styles, styleOverrides, entityFills, relationshipFills) {
       internal(this).sources = sources
       internal(this).data = data
       internal(this).formatter = formatter
       internal(this).serviceShapes = serviceShapes
       internal(this).styles = styles;
+      internal(this).styleOverrides = styleOverrides;
+      internal(this).entityFills = entityFills;
+      internal(this).relationshipFills = relationshipFills;
     }
 
     static get Builder() {
@@ -35,6 +38,21 @@ const EntModeller = (function () {
 
         addData(name, data, comparer) {
           internal(this).data.set(name, { name: name, data: data, comparer: comparer })
+          return this
+        }
+
+        addStyleOverides(overrides) {
+          internal(this).styleOverrides = overrides;
+          return this
+        }
+
+        addEntityFills(fills) {
+          internal(this).entityFills = fills;
+          return this
+        }
+
+        addRelationshipFills(fills) {
+          internal(this).relationshipFills = fills;
           return this
         }
 
@@ -64,7 +82,14 @@ const EntModeller = (function () {
         }
 
         build() {
-          var tracer = new EntModeller(internal(this).sources, internal(this).data, internal(this).formatter, internal(this).serviceShapes, internal(this).styles);
+          var tracer = new EntModeller(internal(this).sources, 
+                                       internal(this).data, 
+                                       internal(this).formatter, 
+                                       internal(this).serviceShapes, 
+                                       internal(this).styles, 
+                                       internal(this).styleOverrides, 
+                                       internal(this).entityFills, 
+                                       internal(this).relationshipFills);
           return tracer;
         }
       }
@@ -94,7 +119,12 @@ const EntModeller = (function () {
             })
           });
           let results = Array.from(merged.values());
-          let formatted = formatter(results, internal(this).serviceShapes, internal(this).styles);
+          let formatted = formatter(results, 
+                                    internal(this).serviceShapes, 
+                                    internal(this).styles,
+                                    internal(this).styleOverrides, 
+                                    internal(this).entityFills, 
+                                    internal(this).relationshipFills);
           resolve(formatted);
         });
       });

@@ -1,4 +1,4 @@
-module.exports.GenerateDOT = function (data, serviceShapes, styles) {
+module.exports.GenerateDOT = function (data, serviceShapes, styles, styleOverrides, entityFills, relationshipFills) {
     let unique = [];
     data.forEach(r => {
         if (r.from !== undefined) {
@@ -25,9 +25,13 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles) {
 
     let output = 'digraph services {\r\n';
     output += '{\r\n';
-    unique.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles)}]\r\n`)
+    unique.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, styleOverrides)}]\r\n`)
+    if (entityFills !== undefined)
+        entityFills.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, styleOverrides)}]\r\n`)
     output += '}\r\n';
     data.filter(f => f.node === undefined).forEach(relationship => output += `${transformName(relationship.from.name)} -> ${transformName(relationship.to.name)}\r\n`)
+    if (relationshipFills !== undefined)
+        relationshipFills.forEach(fill => output += `${transformName(fill.from)} -> ${transformName(fill.to)}\r\n`)
     output += '}\r\n';
     return output;
 }
@@ -98,15 +102,25 @@ function transformName(name) {
     return name.replaceAll("-", "_");
 }
 
-function buildStyles(service, styles) {
-    if (service.style === undefined)
-        return '';
+function buildStyles(service, styles, styleOverrides) {
+
+    let style = service.style;
+
+    if (styleOverrides !== undefined) {
+        let match = styleOverrides.find(f => f.name === service.name);
+        if (match !== undefined)
+            style = match.style;
+    }
 
     if (styles === undefined)
         return '';
 
-    if (service.style in styles) {
-        let nodeStyles = styles[service.style];
+    if (style === undefined)
+        return '';
+
+
+    if (style in styles) {
+        let nodeStyles = styles[style];
         let styleCsv = '';
         Object.entries(nodeStyles).forEach(([fkey, fval]) => styleCsv += `, ${fkey}=${fval}`);
         return styleCsv;

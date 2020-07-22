@@ -13,8 +13,24 @@ var styles = {
     color: 'red',
     fillcolor: 'blue',
     height: 2
+  },
+  styleB: {
+    color: 'green',
+    fillcolor: 'orange',
+    height: 3
+  },
+  styleC: {
+    color: 'black',
+    fillcolor: 'brown',
+    height: 4
   }
 };
+
+var overides = [{name: 'queueJ', style: 'styleB'}, {name: 'serviceE', style: 'styleC'}];
+
+var relFilles = [{from: 'serviceE', to: 'queueJ'}, {from: 'queueJ', to: 'serviceA'}];
+
+var entFilles = [{ name: 'queueW', type: 'queue' }];
 
 class myTestSource {
   generateSourceConnections() {
@@ -28,6 +44,9 @@ async function generateDiagram() {
   var modeller = new lt.EntModeller.Builder()
     .addSource("elk", new myTestSource(), null)
     .addData("elk2", results, null)
+    .addStyleOverides(overides)
+    .addRelationshipFills(relFilles)
+    .addEntityFills(entFilles)
     .outputAsDOTDefaultServices(styles)
     .build()
 
