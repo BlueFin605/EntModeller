@@ -76,13 +76,13 @@ function outputGroupItems(items) {
 function findGroup(item, entityOverrides) {
     let group = 'default';
 
-    if (item !== undefined && item.group !== undefined)
-        group = item.group;
+    if (item !== undefined && item.relationshipGroup !== undefined)
+        group = item.relationshipGroup;
 
     if (entityOverrides !== undefined) {
         let match = entityOverrides.find(f => f.name === item.name);
-        if (match !== undefined && match.group !== undefined)
-            group = match.group;
+        if (match !== undefined && match.relationshipGroup !== undefined)
+            group = match.relationshipGroup;
     }
 
     return group;
@@ -91,13 +91,13 @@ function findGroup(item, entityOverrides) {
 function findFillGroup(item, entityOverrides) {
     let group = 'default';
 
-    if (item !== undefined && item.group !== undefined)
-        group = item.group;
+    if (item !== undefined && item.relationshipGroup !== undefined)
+        group = item.relationshipGroup;
 
     if (entityOverrides !== undefined) {
         let match = entityOverrides.find(f => f.name === item.from);
-        if (match !== undefined && match.group !== undefined)
-            group = match.group;
+        if (match !== undefined && match.relationshipGroup !== undefined)
+            group = match.relationshipGroup;
     }
 
     return group;
