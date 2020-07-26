@@ -1,4 +1,4 @@
-module.exports.GenerateDOT = function (data, serviceShapes, styles, styleOverrides, entityFills, relationshipFills) {
+module.exports.GenerateDOT = function (data, serviceShapes, styles, entityOverrides, entityFills, relationshipFills) {
     let unique = [];
     data.forEach(r => {
         if (r.from !== undefined) {
@@ -25,15 +25,72 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles, styleOverrid
 
     let output = 'digraph services {\r\n';
     output += '{\r\n';
-    unique.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, styleOverrides)}]\r\n`)
+    unique.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`)
     if (entityFills !== undefined)
-        entityFills.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, styleOverrides)}]\r\n`)
+        entityFills.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`)
     output += '}\r\n';
-    data.filter(f => f.node === undefined).forEach(relationship => output += `${transformName(relationship.from.name)} -> ${transformName(relationship.to.name)}\r\n`)
+
+    let grouped = data
+        .reduce((accumulator, item) => {
+            let group = findGroup(item.from);
+            if (!(group in accumulator))
+                accumulator[group] = { name: group, items: [] };
+            accumulator[group].items.push(item);
+            return accumulator;
+        }, {});
+
+
     if (relationshipFills !== undefined)
-        relationshipFills.forEach(fill => output += `${transformName(fill.from)} -> ${transformName(fill.to)}\r\n`)
+        relationshipFills.forEach(fill => {
+            let group = findFillGroup(fill);
+            if (!(group in grouped))
+                grouped[group] = { name: group, items: [] };
+            grouped[group].items.push({ to: { name: fill.to }, from: { name: fill.from } });
+        });
+
+    Object.values(grouped).forEach(g => output += outputGroup(g, relationshipFills));
+
     output += '}\r\n';
     return output;
+}
+
+function outputGroup(group) {
+    let output = '';
+
+    if (group.name !== 'default')
+        output = `subgraph cluster${group.name}{\r\n`;
+
+    output += outputGroupItems(group.items);
+
+    if (group.name != 'default')
+        output += '}\r\n';
+    return output;
+}
+
+function outputGroupItems(items) {
+    let output = '';
+    items.filter(f => f.node === undefined).forEach(relationship => output += `${transformName(relationship.from.name)} -> ${transformName(relationship.to.name)}\r\n`)
+    return output;
+}
+
+function findGroup(item) {
+    if (item === undefined)
+    return 'default';
+
+    if (item.group === undefined)
+    return 'default';
+
+    return item.group;
+}
+
+function findFillGroup(item) {
+    if (item === undefined)
+    return 'default';
+
+    if (item.group === undefined)
+    return 'default';
+
+    return item.group;
 }
 
 module.exports.Shapes = class Shapes {
@@ -102,12 +159,12 @@ function transformName(name) {
     return name.replaceAll("-", "_");
 }
 
-function buildStyles(service, styles, styleOverrides) {
+function buildStyles(service, styles, entityOverrides) {
 
     let style = service.style;
 
-    if (styleOverrides !== undefined) {
-        let match = styleOverrides.find(f => f.name === service.name);
+    if (entityOverrides !== undefined) {
+        let match = entityOverrides.find(f => f.name === service.name);
         if (match !== undefined)
             style = match.style;
     }

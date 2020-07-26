@@ -1,12 +1,12 @@
 var lt = require('../src/index.js')
 
-var results = [{ from: { name: 'service-type-A', type: 'service' }, to: { name: 'serviceB', type: 'service', style: 'styleA' } },
+var results = [{ from: { name: 'service-type-A', type: 'service', group: 'groupA' }, to: { name: 'serviceB', type: 'service', style: 'styleA' } },
 { from: { name: 'serviceE', type: 'service' }, to: { name: 'service-type-A', type: 'service' } },
 { from: { name: 'serviceB', type: 'service', style: 'styleA' }, to: { name: 'queueA', type: 'queue' } },
-{ from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceC', type: 'service' } },
-{ from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceD', type: 'service' } },
-{ from: { name: 'queueA', type: 'queue' }, to: { name: 'serviceE', type: 'service' } },
-{ node: { name: 'queueJ', type: 'queue' } }];
+{ from: { name: 'queueA', type: 'queue', group: 'groupA' }, to: { name: 'serviceC', type: 'service' } },
+{ from: { name: 'queueA', type: 'queue', group: 'groupA' }, to: { name: 'serviceD', type: 'service' } },
+{ from: { name: 'queueA', type: 'queue', group: 'groupA' }, to: { name: 'serviceE', type: 'service' } },
+{ node: { name: 'queueJ', type: 'queue', group: 'groupA' } }];
 
 var styles = {
   styleA: {
@@ -28,7 +28,7 @@ var styles = {
 
 var overides = [{name: 'queueJ', style: 'styleB'}, {name: 'serviceE', style: 'styleC'}];
 
-var relFilles = [{from: 'serviceE', to: 'queueJ'}, {from: 'queueJ', to: 'serviceA'}];
+var relFilles = [{from: 'serviceE', to: 'queueJ', group: 'groupA'}, {from: 'queueJ', to: 'serviceA'}];
 
 var entFilles = [{ name: 'queueW', type: 'queue' }];
 
@@ -44,7 +44,7 @@ async function generateDiagram() {
   var modeller = new lt.EntModeller.Builder()
     .addSource("elk", new myTestSource(), null)
     .addData("elk2", results, null)
-    .addStyleOverides(overides)
+    .addEntityOverrides(overides)
     .addRelationshipFills(relFilles)
     .addEntityFills(entFilles)
     .outputAsDOTDefaultServices(styles)

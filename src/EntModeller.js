@@ -13,13 +13,13 @@ const EntModeller = (function () {
   }
 
   class EntModeller {
-    constructor(sources, data, formatter, serviceShapes, styles, styleOverrides, entityFills, relationshipFills) {
+    constructor(sources, data, formatter, serviceShapes, styles, entityOverrides, entityFills, relationshipFills) {
       internal(this).sources = sources
       internal(this).data = data
       internal(this).formatter = formatter
       internal(this).serviceShapes = serviceShapes
       internal(this).styles = styles;
-      internal(this).styleOverrides = styleOverrides;
+      internal(this).entityOverrides = entityOverrides;
       internal(this).entityFills = entityFills;
       internal(this).relationshipFills = relationshipFills;
     }
@@ -41,8 +41,8 @@ const EntModeller = (function () {
           return this
         }
 
-        addStyleOverides(overrides) {
-          internal(this).styleOverrides = overrides;
+        addEntityOverrides(overrides) {
+          internal(this).entityOverrides = overrides;
           return this
         }
 
@@ -87,7 +87,7 @@ const EntModeller = (function () {
                                        internal(this).formatter, 
                                        internal(this).serviceShapes, 
                                        internal(this).styles, 
-                                       internal(this).styleOverrides, 
+                                       internal(this).entityOverrides, 
                                        internal(this).entityFills, 
                                        internal(this).relationshipFills);
           return tracer;
@@ -122,7 +122,7 @@ const EntModeller = (function () {
           let formatted = formatter(results, 
                                     internal(this).serviceShapes, 
                                     internal(this).styles,
-                                    internal(this).styleOverrides, 
+                                    internal(this).entityOverrides, 
                                     internal(this).entityFills, 
                                     internal(this).relationshipFills);
           resolve(formatted);
