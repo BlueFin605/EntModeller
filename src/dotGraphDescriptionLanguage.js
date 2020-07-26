@@ -30,9 +30,9 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles, entityOverri
         entityFills.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`)
     output += '}\r\n';
 
-    let grouped = data
+    let grouped = data.filter(f => f.from !== undefined)
         .reduce((accumulator, item) => {
-            let group = findGroup(item.from);
+            let group = findGroup(item.from, entityOverrides);
             if (!(group in accumulator))
                 accumulator[group] = { name: group, items: [] };
             accumulator[group].items.push(item);
@@ -42,7 +42,7 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles, entityOverri
 
     if (relationshipFills !== undefined)
         relationshipFills.forEach(fill => {
-            let group = findFillGroup(fill);
+            let group = findFillGroup(fill, entityOverrides);
             if (!(group in grouped))
                 grouped[group] = { name: group, items: [] };
             grouped[group].items.push({ to: { name: fill.to }, from: { name: fill.from } });
@@ -73,24 +73,34 @@ function outputGroupItems(items) {
     return output;
 }
 
-function findGroup(item) {
-    if (item === undefined)
-    return 'default';
+function findGroup(item, entityOverrides) {
+    let group = 'default';
 
-    if (item.group === undefined)
-    return 'default';
+    if (item !== undefined && item.group !== undefined)
+        group = item.group;
 
-    return item.group;
+    if (entityOverrides !== undefined) {
+        let match = entityOverrides.find(f => f.name === item.name);
+        if (match !== undefined && match.group !== undefined)
+            group = match.group;
+    }
+
+    return group;
 }
 
-function findFillGroup(item) {
-    if (item === undefined)
-    return 'default';
+function findFillGroup(item, entityOverrides) {
+    let group = 'default';
 
-    if (item.group === undefined)
-    return 'default';
+    if (item !== undefined && item.group !== undefined)
+        group = item.group;
 
-    return item.group;
+    if (entityOverrides !== undefined) {
+        let match = entityOverrides.find(f => f.name === item.from);
+        if (match !== undefined && match.group !== undefined)
+            group = match.group;
+    }
+
+    return group;
 }
 
 module.exports.Shapes = class Shapes {

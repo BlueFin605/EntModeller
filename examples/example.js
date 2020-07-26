@@ -26,7 +26,7 @@ var styles = {
   }
 };
 
-var overides = [{name: 'queueJ', style: 'styleB'}, {name: 'serviceE', style: 'styleC'}];
+var overides = [{name: 'queueJ', style: 'styleB', group: 'override'}, {name: 'serviceE', style: 'styleC', group: 'override'}];
 
 var relFilles = [{from: 'serviceE', to: 'queueJ', group: 'groupA'}, {from: 'queueJ', to: 'serviceA'}];
 
