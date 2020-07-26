@@ -26,11 +26,11 @@ var styles = {
   }
 };
 
-var overides = [{name: 'queueJ', style: 'styleB', relationshipGroup: 'override'}, {name: 'serviceE', style: 'styleC', relationshipGroup: 'override'}];
+var overides = [{name: 'queueJ', style: 'styleB', relationshipGroup: 'override', entityGroup: 'entoverride'}, {name: 'serviceE', style: 'styleC', relationshipGroup: 'override'}];
 
 var relFilles = [{from: 'serviceE', to: 'queueJ', relationshipGroup: 'groupA'}, {from: 'queueJ', to: 'serviceA'}];
 
-var entFilles = [{ name: 'queueW', type: 'queue' }];
+var entFilles = [{ name: 'queueW', type: 'queue', entityGroup: 'filledGroup' }];
 
 class myTestSource {
   generateSourceConnections() {

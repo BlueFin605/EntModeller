@@ -23,11 +23,30 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles, entityOverri
         }
     });
 
+    let uniqueGrouped = unique.reduce((accumulator, item) => {
+        let group = findEntityGroup(item, entityOverrides);
+        if (!(group in accumulator))
+            accumulator[group] = { name: group, items: [] };
+        accumulator[group].items.push(item);
+        return accumulator;
+    }, {});
+
+    if (entityFills !== undefined)
+        entityFills.forEach(fill => {
+            let group = findEntityGroup(fill, entityOverrides);
+            if (!(group in uniqueGrouped))
+                uniqueGrouped[group] = { name: group, items: [] };
+            uniqueGrouped[group].items.push(fill);
+        });
+
+
     let output = 'digraph services {\r\n';
     output += '{\r\n';
-    unique.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`)
-    if (entityFills !== undefined)
-        entityFills.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`)
+    Object.values(uniqueGrouped).forEach(g => output += outputEntityGroup(g, entityFills, entityOverrides, styles, serviceShapes));
+
+    // Object.values(uniqueGrouped).forEach(g => g.items.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`));
+    // if (entityFills !== undefined)
+    //     entityFills.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`)
     output += '}\r\n';
 
     let grouped = data.filter(f => f.from !== undefined)
@@ -48,28 +67,47 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles, entityOverri
             grouped[group].items.push({ to: { name: fill.to }, from: { name: fill.from } });
         });
 
-    Object.values(grouped).forEach(g => output += outputGroup(g, relationshipFills));
+    Object.values(grouped).forEach(g => output += outputRelationShipGroup(g, relationshipFills));
 
     output += '}\r\n';
     return output;
 }
 
-function outputGroup(group) {
+function outputEntityGroup(group, entityOverrides, styles, serviceShapes) {
     let output = '';
 
     if (group.name !== 'default')
         output = `subgraph cluster${group.name}{\r\n`;
 
-    output += outputGroupItems(group.items);
+    output += outputEntityGroupItems(group.items, entityOverrides, styles, serviceShapes);
 
     if (group.name != 'default')
         output += '}\r\n';
     return output;
 }
 
-function outputGroupItems(items) {
+function outputRelationShipGroup(group) {
+    let output = '';
+
+    if (group.name !== 'default')
+        output = `subgraph cluster${group.name}{\r\n`;
+
+    output += outputRelationShipGroupItems(group.items);
+
+    if (group.name != 'default')
+        output += '}\r\n';
+    return output;
+}
+
+function outputRelationShipGroupItems(items) {
     let output = '';
     items.filter(f => f.node === undefined).forEach(relationship => output += `${transformName(relationship.from.name)} -> ${transformName(relationship.to.name)}\r\n`)
+    return output;
+}
+
+function outputEntityGroupItems(items, entityOverrides, styles, serviceShapes) {
+    let output = '';
+    items.forEach(entity => output += `${transformName(entity.name)} [shape=${serviceShapes[entity.type]}${buildStyles(entity, styles, entityOverrides)}]\r\n`)
     return output;
 }
 
@@ -98,6 +136,21 @@ function findFillGroup(item, entityOverrides) {
         let match = entityOverrides.find(f => f.name === item.from);
         if (match !== undefined && match.relationshipGroup !== undefined)
             group = match.relationshipGroup;
+    }
+
+    return group;
+}
+
+function findEntityGroup(item, entityOverrides) {
+    let group = 'default';
+
+    if (item !== undefined && item.entityGroup !== undefined)
+        group = item.entityGroup;
+
+    if (entityOverrides !== undefined) {
+        let match = entityOverrides.find(f => f.name === item.name);
+        if (match !== undefined && match.entityGroup !== undefined)
+            group = match.entityGroup;
     }
 
     return group;
