@@ -42,7 +42,7 @@ module.exports.GenerateDOT = function (data, serviceShapes, styles, entityOverri
 
     let output = 'digraph services {\r\n';
     output += '{\r\n';
-    Object.values(uniqueGrouped).forEach(g => output += outputEntityGroup(g, entityFills, entityOverrides, styles, serviceShapes));
+    Object.values(uniqueGrouped).forEach(g => output += outputEntityGroup(g, entityOverrides, styles, serviceShapes));
 
     // Object.values(uniqueGrouped).forEach(g => g.items.forEach(e => output += `${transformName(e.name)} [shape=${serviceShapes[e.type]}${buildStyles(e, styles, entityOverrides)}]\r\n`));
     // if (entityFills !== undefined)
